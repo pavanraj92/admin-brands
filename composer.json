@@ -1,0 +1,22 @@
+{
+    "name": "admin/brands",
+    "description": "Manage product brands by adding, editing, or organizing brand information to enhance product categorization and recognition.",
+    "type": "library",
+    "version": "1.0.0",  
+    "license": "MIT",
+    "autoload": {
+      "psr-4": {
+        "admin\\brands\\": "src/"
+      }
+    },
+    "extra": { 
+      "laravel": {
+        "providers": [
+          "admin\\brands\\BrandServiceProvider"
+        ]
+      }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+  }
+  
