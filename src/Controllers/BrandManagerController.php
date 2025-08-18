@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use admin\brands\Requests\BrandCreateRequest;
 use admin\brands\Requests\BrandUpdateRequest;
 use admin\brands\Models\Brand;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class BrandManagerController extends Controller
 {
@@ -92,6 +94,19 @@ class BrandManagerController extends Controller
     public function destroy(Brand $brand)
     {
         try {
+            if (Schema::hasTable('products')) {
+                $isAssigned = DB::table('products')
+                    ->where('brand_id', $brand->id)
+                    ->whereNull('deleted_at')
+                    ->exists();
+
+                if ($isAssigned) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'This brand is assigned to products and cannot be deleted.'
+                    ], 400);
+                }
+            }
             $brand->delete();
             return response()->json(['success' => true, 'message' => 'Record deleted successfully.']);
         } catch (\Exception $e) {
