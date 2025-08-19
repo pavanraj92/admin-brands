@@ -32,6 +32,11 @@ class BrandServiceProvider extends ServiceProvider
             $this->loadMigrationsFrom(base_path('Modules/Brands/database/migrations'));
         }
 
+        // Also merge config from published module if it exists
+        if (file_exists(base_path('Modules/Brands/config/brands.php'))) {
+            $this->mergeConfigFrom(base_path('Modules/Brands/config/brands.php'), 'brand.constants');
+        }
+
         // Only publish automatically during package installation, not on every request
         // Use 'php artisan brands:publish' command for manual publishing
         // $this->publishWithNamespaceTransformation();
