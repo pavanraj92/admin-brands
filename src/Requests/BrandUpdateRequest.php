@@ -3,6 +3,7 @@
 namespace admin\brands\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class BrandUpdateRequest extends FormRequest
 {
@@ -12,7 +13,13 @@ class BrandUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|min:3|max:100|unique:brands,name,' . $this->route('brand')->id,            
+            'name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:100',
+                Rule::unique('brands', 'name')->ignore($this->route('brand')->id)->whereNull('deleted_at'),
+            ],
             'status' => 'required|in:0,1',
         ];
     }
