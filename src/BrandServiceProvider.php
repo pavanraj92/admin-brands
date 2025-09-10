@@ -20,7 +20,13 @@ class BrandServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/views'      // Package views as fallback
         ], 'brand');
 
-        $this->mergeConfigFrom(__DIR__.'/../config/brand.php', 'brand.constants');
+        // Load published module config first (if it exists), then fallback to package config
+        if (file_exists(base_path('Modules/Brands/config/brand.php'))) {
+            $this->mergeConfigFrom(base_path('Modules/Brands/config/brand.php'), 'brand.constants');
+        } else {
+            // Fallback to package config if published config doesn't exist
+            $this->mergeConfigFrom(__DIR__.'/../config/brand.php', 'brand.constants');
+        }
         
         // Also register module views with a specific namespace for explicit usage
         if (is_dir(base_path('Modules/Brands/resources/views'))) {
@@ -32,17 +38,13 @@ class BrandServiceProvider extends ServiceProvider
             $this->loadMigrationsFrom(base_path('Modules/Brands/database/migrations'));
         }
 
-        // Also merge config from published module if it exists
-        if (file_exists(base_path('Modules/Brands/config/brands.php'))) {
-            $this->mergeConfigFrom(base_path('Modules/Brands/config/brands.php'), 'brand.constants');
-        }
-
         // Only publish automatically during package installation, not on every request
         // Use 'php artisan brands:publish' command for manual publishing
         // $this->publishWithNamespaceTransformation();
         
         // Standard publishing for non-PHP files
         $this->publishes([
+            __DIR__ . '/../config/' => base_path('Modules/Brands/config/'),
             __DIR__ . '/../database/migrations' => base_path('Modules/Brands/database/migrations'),
             __DIR__ . '/../resources/views' => base_path('Modules/Brands/resources/views/'),
         ], 'brand');
